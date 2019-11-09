@@ -17,24 +17,132 @@ class ThirdGLEventListener implements GLEventListener {
     /**
      * Interface to the GLU library.
      */
-    private GLU glu;
+    private GLU glu; private GL2 gl;
 
     private void doIt(GL2 gl){
-//        gl.glColor3d(1,0.5, 0.7);
-//        gl.glPointSize(10.0f);
-//        gl.glBegin(GL2.GL_POINTS);
-//
-//        gl.glVertex2d(10, -50);
-//
-//        gl.glEnd();
+        /*gl.glColor3d(1,0.5, 0.7);
+        gl.glPointSize(10.0f);
+        gl.glBegin(GL2.GL_POINTS);
+
+        gl.glVertex2d(10, -50);
+
+        gl.glEnd();*/
 
         //BruteForceDrawLine(gl, -100, -50, -50, 180);
         //DDA_Algo(gl, -100, -50, -50, 180);
-        MidpointLineDrawingAlgo(gl, 100, 50, 200, 80);
+        //MidpointLineForZone0(gl, 100, 50, 200, 80);
+        MidpointLineForAnyZone(50, -100, 100, -190);
     }
 
-    //MidpointLineDrawing_Algo
-    private void MidpointLineDrawingAlgo(GL2 gl, double x1, double y1, double x2, double y2){
+    //MidpointLineDrawing_Algo irrespective of zones
+    private void MidpointLineForAnyZone(double x1, double y1, double x2, double y2) {
+        int zone = getZone(x1, y1, x2, y2);
+        if (zone == -1){return;}
+        switch (zone){
+            //encoding the zones to zone 0
+            case 0:
+                MidpointLineForZone0ButModified(0, x1, y1, x2, y2);
+                break;
+            case 1:
+                MidpointLineForZone0ButModified(1, y1, x1, y2, x2);
+                break;
+            case 2:
+                MidpointLineForZone0ButModified(2, y1, -x1, y2, -x2);
+                break;
+            case 3:
+                MidpointLineForZone0ButModified(3, -x1, y1, -x2, y2);
+                break;
+            case 4:
+                MidpointLineForZone0ButModified(4, -x1, -y1, -x2, -y2);
+                break;
+            case 5:
+                MidpointLineForZone0ButModified(5, -y1, -x1, -y2, -x2);
+                break;
+            case 6:
+                MidpointLineForZone0ButModified(6, -y1, x1, -y2, x2);
+                break;
+            case 7:
+                MidpointLineForZone0ButModified(7, x1, -y1, x2, -y2);
+                break;
+        }
+    }
+    private void MidpointLineForZone0ButModified(int zone, double x1, double y1, double x2, double y2) {
+        System.out.println("encoded zone 0 points : ("+x1+","+y1+"), ("+x2+","+y2+")");
+        double dx = x2-x1;
+        double dy = y2-y1;
+        double d= 2*dy-dx;
+        double dE = 2*dy;
+        double dNE = 2*(dy-dx);
+
+        double x=x1, y=y1;
+
+        gl.glBegin(GL2.GL_POINTS);
+
+        while(x<=x2){
+            switch (zone){
+                //decoding the zones from zone 0
+                case 0:
+                    gl.glVertex2d(x, y);
+                    break;
+                case 1:
+                    gl.glVertex2d(y, x);
+                    break;
+                case 2:
+                    gl.glVertex2d(-y, x);
+                    break;
+                case 3:
+                    gl.glVertex2d(-x, y);
+                    break;
+                case 4:
+                    gl.glVertex2d(-x, -y);
+                    break;
+                case 5:
+                    gl.glVertex2d(-y, -x);
+                    break;
+                case 6:
+                    gl.glVertex2d(y, -x);
+                    break;
+                case 7:
+                    gl.glVertex2d(x, -y);
+                    break;
+            }
+
+            if(d<=0){
+                d = d + dE;
+            }
+            else{
+                y++;
+                d = d + dNE;
+            }
+            x++;
+        }
+
+        gl.glEnd();
+    }
+    private int getZone(double x1, double y1, double x2, double y2){
+        double dx = x2-x1;
+        double dy = y2-y1;
+        int zone=-1;
+
+        //1st quadrant
+        if (dx>0 && dy>0 && Math.abs(dx)>Math.abs(dy)){zone = 0;}
+        if (dx>0 && dy>0 && Math.abs(dy)>Math.abs(dx)){zone = 1;}
+        //2nd quadrant
+        if (dx<0 && dy>0 && Math.abs(dy)>Math.abs(dx)){zone = 2;}
+        if (dx<0 && dy>0 && Math.abs(dx)>Math.abs(dy)){zone = 3;}
+        //3rd quadrant
+        if (dx<0 && dy<0 && Math.abs(dx)>Math.abs(dy)){zone = 4;}
+        if (dx<0 && dy<0 && Math.abs(dy)>Math.abs(dx)){zone = 5;}
+        //4th quadrant
+        if (dx>0 && dy<0 && Math.abs(dy)>Math.abs(dx)){zone = 6;}
+        if (dx>0 && dy<0 && Math.abs(dx)>Math.abs(dy)){zone = 7;}
+
+        System.out.println("zone = "+zone);
+        return zone;
+    }
+
+    //MidpointLineDrawing_Algo for zone = 0
+    private void MidpointLineForZone0(GL2 gl, double x1, double y1, double x2, double y2){
         double dx = x2-x1;
         double dy = y2-y1;
         double d= 2*dy-dx;
@@ -126,7 +234,7 @@ class ThirdGLEventListener implements GLEventListener {
      */
     @Override
     public void display(GLAutoDrawable drawable) {
-        GL2 gl = drawable.getGL().getGL2();
+        gl = drawable.getGL().getGL2();
 
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
         /*
@@ -172,12 +280,3 @@ public class Main
     }
 }
 
-
-
-
-/*public class Main {
-
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-    }
-}*/
