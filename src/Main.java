@@ -10,6 +10,8 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.glu.GLU;
+
+import java.awt.event.WindowEvent;
 import java.lang.Math;
 import javax.swing.JFrame;
 
@@ -31,7 +33,9 @@ class ThirdGLEventListener implements GLEventListener {
         //BruteForceDrawLine(gl, -100, -50, -50, 180);
         //DDA_Algo(gl, -100, -50, -50, 180);
         //MidpointLineForZone0(gl, 100, 50, 200, 80);
-        MidpointLineForAnyZone(50, -100, 100, -190);
+        //MidpointLineForAnyZone(50, -100, 100, -190);
+
+
     }
 
     //MidpointLineDrawing_Algo irrespective of zones
@@ -244,20 +248,14 @@ class ThirdGLEventListener implements GLEventListener {
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width,
-                        int height) {
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
     }
-
-    public void displayChanged(GLAutoDrawable drawable,
-                               boolean modeChanged, boolean deviceChanged) {
+    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
-
     @Override
-    public void dispose(GLAutoDrawable arg0)
-    {
+    public void dispose(GLAutoDrawable arg0) { }
 
-    }
-}
+} // 'ThirdGLEventListener' class
 
 public class Main
 {
@@ -272,11 +270,21 @@ public class Main
         glcanvas.addGLEventListener(b);
         glcanvas.setSize(900, 600);
         //creating frame
-        final JFrame frame=new JFrame("My frame");
+        final JFrame frame=new MyJFrame();
+        frame.setTitle("My frame");
         //adding canvas to frame
         frame.add(glcanvas);
         frame.setSize(640,480);
         frame.setVisible(true);
     }
-}
+
+    static class MyJFrame extends JFrame {
+        protected void processWindowEvent(WindowEvent e) {
+            if (e.getID() == WindowEvent.WINDOW_CLOSING) {
+                System.exit(0);
+            }
+        }
+    }
+}// 'Main' class
+
 
