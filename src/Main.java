@@ -36,84 +36,29 @@ class ThirdGLEventListener implements GLEventListener {
 
         //BruteForceDrawLine(gl, -100, -50, -50, 180);
         //DDA_Algo(gl, -100, -50, -50, 180);
+
         //MidpointLineForZone0(gl, 100, 50, 200, 80);
         //MidpointLineForAnyZone(50, -100, 100, -190);
+
         //MidpointCircleForZone1Arc(50,-50, 100);
-        MidpointCircleForAllZone(100, 50, 100); //change x, y here to get interesting images
+        MidpointCircleForAllZoneArcs(-50, 80, 100);
+        //MidpointLineForAnyZone(50,60, 50+100/Math.sqrt(2), 60+100/Math.sqrt(2));
+        //DDA_Algo(gl,50, 60, 50, 160);
+
+
     }
 
     //MidpointCircleDrawing_Algo irrespective of zones
-    private void MidpointCircleForAllZone(double x1, double y1, double r){
-        int zone = 0;
-        while (zone<8) {
-            switch (zone) {
-                //encoding the zones to zone 0
-                case 0:
-                    MidpointCircleForZone1ArcButModified(0, x1, y1, r);
-                    break;
-                case 1:
-                    MidpointCircleForZone1ArcButModified(1, x1, y1, r);
-                    break;
-                case 2:
-                    MidpointCircleForZone1ArcButModified(2, x1, y1, r);
-                    break;
-                case 3:
-                    MidpointCircleForZone1ArcButModified(3, x1, y1, r);
-                    break;
-                case 4:
-                    MidpointCircleForZone1ArcButModified(4, x1, y1, r);
-                    break;
-                case 5:
-                    MidpointCircleForZone1ArcButModified(5, x1, y1, r);
-                    break;
-                case 6:
-                    MidpointCircleForZone1ArcButModified(6, x1, y1, r);
-                    break;
-                case 7:
-                    MidpointCircleForZone1ArcButModified(7, x1, y1, r);
-                    break;
-            }//switch
-            zone++;
-        }//while
+    private void MidpointCircleForAllZoneArcs(double x1, double y1, double r){
+        MidpointCircleForZone1ArcButModified( x1, y1, r);
     }
-    private void MidpointCircleForZone1ArcButModified(int zone, double x_center, double y_center, double r){
-        double d= 1-r;
+    private void MidpointCircleForZone1ArcButModified(double x_center, double y_center, double r){
+        double d= 3-2*r;//1-r;
         double dE = 3;
         double dSE = 5 - 2*r;
         double x=0, y=r;
-        gl.glBegin(GL2.GL_POINTS);
 
-        while (Math.abs(x)<(r/1.4142)){
-
-            //x+=x_center; y+=y_center;
-            System.out.println(x+", "+y);
-            switch (zone){
-                //decoding the zones from zone 1
-                case 0:
-                    gl.glVertex2d(y+y_center, x+x_center);
-                    break;
-                case 1:
-                    gl.glVertex2d(x+x_center, y+y_center);
-                    break;
-                case 2:
-                    gl.glVertex2d(-(x+x_center), y+y_center);
-                    break;
-                case 3:
-                    gl.glVertex2d(-(y+y_center), x+x_center);
-                    break;
-                case 4:
-                    gl.glVertex2d(-(y+y_center), -(x+x_center));
-                    break;
-                case 5:
-                    gl.glVertex2d(-(x+x_center), -(y+y_center));
-                    break;
-                case 6:
-                    gl.glVertex2d(x+x_center, -(y+y_center));
-                    break;
-                case 7:
-                    gl.glVertex2d(y+y_center, -(x+x_center));
-                    break;
-            }
+        while (y>=x){
 
             if (d<0){ //dE
                 d = d + dE;
@@ -129,7 +74,26 @@ class ThirdGLEventListener implements GLEventListener {
             }
 
             x++;
+
+            draw8Way(x, y, x_center, y_center);
         }// while
+    }
+    private void draw8Way(double x, double y, double xc, double yc) {
+        gl.glBegin(GL2.GL_POINTS);
+
+        gl.glVertex2d(x+xc, y+yc);
+        gl.glVertex2d(y+xc, x+yc);
+
+        gl.glVertex2d(-x+xc, y+yc);
+        gl.glVertex2d(-y+xc, x+yc);
+
+        gl.glVertex2d(-x+xc, -y+yc);
+        gl.glVertex2d(-y+xc, -x+yc);
+
+
+        gl.glVertex2d(x+xc, -y+yc);
+        gl.glVertex2d(y+xc, -x+yc);
+
         gl.glEnd();
     }
 
@@ -141,8 +105,7 @@ class ThirdGLEventListener implements GLEventListener {
         double x=0, y=r;
         gl.glBegin(GL2.GL_POINTS);
 
-        while (Math.abs(x)<(r/1.4142)){
-            System.out.println(x+x_center+", "+y+y_center);
+        while (y>=x){
             gl.glVertex2d(x+x_center, y+y_center);
 
             if (d<0){ //dE
