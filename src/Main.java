@@ -31,8 +31,8 @@ class ThirdGLEventListener implements GLEventListener {
         gl.glEnd();*/
 
         //Drawing the axes
-        BruteForceDrawLine(gl, -100, 0, 100, 0);
-        DDA_Algo(gl, 0, -100, 0, 100);
+        //BruteForceDrawLine(gl, -100, 0, 100, 0);
+        //DDA_Algo(gl, 0, -100, 0, 100);
 
         //BruteForceDrawLine(gl, -100, -50, -50, 180);
         //DDA_Algo(gl, -100, -50, -50, 180);
@@ -41,11 +41,24 @@ class ThirdGLEventListener implements GLEventListener {
         //MidpointLineForAnyZone(50, -100, 100, -190);
 
         //MidpointCircleForZone1Arc(50,-50, 100);
-        MidpointCircleForAllZoneArcs(-50, 80, 100);
+        //MidpointCircleForAllZoneArcs(-50, 80, 100);
         //MidpointLineForAnyZone(50,60, 50+100/Math.sqrt(2), 60+100/Math.sqrt(2));
         //DDA_Algo(gl,50, 60, 50, 160);
 
-
+        //My initials draw
+        //N
+        DDA_Algo(gl, -250,-50, -250, 50);
+        MidpointLineForAnyZone(-151, -50, -250, 50);
+        DDA_Algo(gl, -150,-50, -150, 50);
+        //A
+        MidpointLineForAnyZone(-50, -50, 0, 50);
+        MidpointLineForAnyZone(50, -50, 0, 50);
+        DDA_Algo(gl, -25,0, 25, 0);
+        //M
+        DDA_Algo(gl, 250,-50, 250, 50);
+        DDA_Algo(gl, 150,-50, 150, 50);
+        MidpointLineForAnyZone(150, 50, 200, 10);
+        MidpointLineForAnyZone(250, 50, 200, 10);
     }
 
     //MidpointCircleDrawing_Algo irrespective of zones
